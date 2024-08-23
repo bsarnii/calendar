@@ -1,0 +1,222 @@
+/* Add application styles & imports to this file! */
+
+html,
+body {
+  height: 100%;
+}
+
+app-root {
+  display: block;
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
+
+:root {
+  --kj-body: #fff;
+  --kj-body-2: #fafafa;
+  --kj-border: #d1d1d1;
+  --kj-border-2: #e5e5e5;
+
+  --kj-highlight: #005cbb;
+
+  --kj-cell-width: 140px;
+  --kj-empty-cell-width: 60px;
+  --kj-empty-cell-height: 30px;
+  --kj-body-cell-height: 80px;
+  --kj-dot-radius: 20px;
+}
+
+kj-calendar {
+  & * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  display: flex;
+  flex-flow: column;
+
+  height: 100%;
+  width: 100%;
+
+  background: var(--kj-body);
+
+  &-toolbar {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 1em;
+    padding: 4px 8px;
+  }
+
+  & .body-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex: 1 auto;
+  }
+
+  &-header {
+    display: flex;
+    flex-wrap: nowrap;
+
+    .cell {
+      display: flex;
+      flex-flow: column;
+
+      width: var(--kj-cell-width);
+      height: 80px;
+
+      border-top: 1px solid var(--kj-border);
+      border-right: 1px solid var(--kj-border);
+
+      & .day-container {
+        position: relative;
+        width: 50px;
+        height: 50px;
+
+        &.is-today {
+          background-color: var(--kj-highlight);
+          border-radius: 100%;
+          text-align: center;
+          color: white;
+        }
+
+        & > span {
+          position: absolute;
+          top: 25%;
+          left: 25%;
+        }
+      }
+
+      &:first-child {
+        width: var(--kj-empty-cell-width);
+        flex: unset;
+      }
+    }
+  }
+
+  &-bar {
+    display: flex;
+    flex-wrap: nowrap;
+
+    .cell {
+      display: flex;
+      flex-flow: column;
+
+      width: var(--kj-cell-width);
+      height: var(--kj-empty-cell-height);
+
+      border-top: 1px solid var(--kj-border);
+      border-right: 1px solid var(--kj-border);
+
+      &:first-child {
+        width: var(--kj-empty-cell-width);
+        flex: unset;
+      }
+    }
+  }
+
+  &-body {
+    display: block;
+    position: relative;
+
+    .container {
+      display: flex;
+      flex-flow: column;
+
+      position: relative;
+
+      .row {
+        display: flex;
+        flex-wrap: nowrap;
+
+        .cell {
+          position: relative;
+
+          display: flex;
+          flex-flow: column;
+
+          width: var(--kj-cell-width);
+          height: var(--kj-body-cell-height);
+
+          border-top: 1px solid var(--kj-border);
+          border-right: 1px solid var(--kj-border);
+
+          .hour {
+            position: absolute;
+            top: 10px;
+            left: 8%;
+          }
+
+          .half-hour {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            border-top: 1px dashed var(--kj-border);
+          }
+
+          &:first-child {
+            width: var(--kj-empty-cell-width);
+            flex: unset;
+          }
+        }
+
+        &:last-child {
+          .cell {
+            border-bottom: 1px solid var(--kj-border);
+          }
+        }
+      }
+    }
+  }
+  &-today-bar {
+    display: contents;
+
+    & {
+      .dashed,
+      .line,
+      .dot-container {
+        position: absolute;
+      }
+
+      .dashed,
+      .line {
+        height: 2px;
+      }
+
+      .line {
+        background: var(--kj-highlight);
+      }
+
+      .dashed {
+        border: 1px dashed var(--kj-highlight);
+      }
+
+      .dot-container {
+        .dot {
+          background: var(--kj-highlight);
+          width: var(--kj-dot-radius);
+          height: var(--kj-dot-radius);
+          border-radius: 100%;
+          border: 2px solid white;
+          position: relative;
+
+          top: calc(-1 * var(--kj-dot-radius) / 2);
+          left: calc(-1 * var(--kj-dot-radius) / 2);
+        }
+      }
+    }
+  }
+  &-event-box {
+    .event-box{
+      width: 100%;
+      height: 100%;
+      background-color: rgba(15, 108, 189, 0.9);
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  }
+}
