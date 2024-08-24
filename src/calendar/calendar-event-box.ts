@@ -5,7 +5,9 @@ import { Component } from '@angular/core';
   selector: 'kj-calendar-event-box',
   imports: [],
   template: `
-    <div role=button class="event-box"></div>
+    <div role=button class="event-box">
+      <ng-content></ng-content>
+    </div>
   `,
 })
 export class CalendarEventBox {

@@ -9,10 +9,10 @@ import {
   ComponentRef,
   Input,
   effect,
-  OnInit,
+  computed,
 } from '@angular/core';
 import { JsonPipe } from '@angular/common';
-import { DateTime } from 'luxon';
+import { DateTime, Interval } from 'luxon';
 import { CalendarEvent } from './models/CalendarEvent';
 import { CalendarEventBox } from './calendar-event-box';
 
@@ -178,60 +178,62 @@ export class CalendarTodayBar {
   imports: [FormatHour, TodayBar, JsonPipe, CalendarEventBox],
   template: `
   <div class="container" todayBar [days]="days()">
-    @for (hour of hours; track hour) {
-      <div class="row">
-        <div class='cell'>
-          <span class="mat-body-large hour">{{hour | formatHour}}</span>
-          <div class="half-hour"></div>
-        </div>
-      @for (day of days(); track day) {
-        <div class='cell'>
-          @for(event of events(); track $index){
-            @if(event.interval && event.interval.contains(getCalendarDayAndHour(day,hour))){
-              @let height = event.interval.contains(getCalendarDayAndHour(day,hour)) && event.interval.contains(getCalendarDayAndHalfHour(day,hour)) ? '50%' : '100%';
-              <kj-calendar-event-box [style]="{height}"/>
-              {{height}}
-            }
-          }
-          <div class="half-hour"></div>
+    <div class="column">
+      @for(hour of hours; track $index){
+        <div class="cell time-display">
+        <span class="mat-body-large hour">{{hour | formatHour}}</span>
         </div>
       }
     </div>
+    @for(day of dayIntervals(); track $index){
+      <div class="column day-column">
+        @for(event of events(); track $index){
+          @if(event && day.contains(event.start)){
+            <kj-calendar-event-box [style]="{height: getEventBoxHeight(event.start,event.end), top: getTop(event.start)}">
+              <p style='color: #fff'>Start: {{event.start.toFormat('HH:mm')}}</p>
+              <p style='color: #fff'>End: {{event.end.toFormat('HH:mm')}}</p>
+            </kj-calendar-event-box>
+          }
+        }
+        @for(hour of hours; track $index){
+            <div class="cell">
+              <div class="half-hour"></div>
+            </div>
+        }
+      </div>
     }
   </div>
   `,
 })
-export class CalendarBody implements OnInit {
+export class CalendarBody{
   hours = createHours();
   events = input<CalendarEvent[]>([]);
   days = input<DateTime[]>([]);
 
-  getCalendarDayAndHour(dayDateTime:DateTime,hourDateTime:DateTime){
-    const hour = hourDateTime.hour;
-    const minute = hourDateTime.minute;
-    const second = hourDateTime.second;
-    const millisecond = hourDateTime.millisecond;
-    const day = dayDateTime.set({hour, minute, second, millisecond});
-    return day;
-  }
-  getCalendarDayAndHalfHour(dayDateTime:DateTime,hourDateTime:DateTime){
-    const hour = hourDateTime.hour;
-    const minute = 30;
-    const second = hourDateTime.second;
-    const millisecond = hourDateTime.millisecond;
-    const day = dayDateTime.set({hour, minute, second, millisecond});
-    return day;
-  }
-
-  constructor(){
-    effect(() => {
-
+  dayIntervals = computed(() => {
+    return this.days().map(day => {
+      const dayStart = day.set({hour:0, minute: 0, second: 0, millisecond: 0})
+      const dayEnd = day.set({hour:23, minute: 59, second: 59, millisecond: 999})
+      return Interval.fromDateTimes(dayStart,dayEnd);
     })
+
+  })
+
+
+  getTop(eventStart:DateTime) {
+    const hour = eventStart.hour;
+    const minute = eventStart.minute;
+    const hoursFormula = `${hour - 8} * var(--kj-body-cell-height)`;
+    const minuteRatio = `var(--kj-body-cell-height) / 60`;
+    const minutesFormula = `calc(${minuteRatio} * ${minute})`;
+    return `calc(${hoursFormula} + ${minutesFormula})`;
   }
 
-  ngOnInit(){
-    console.log('days:',this.days())
-    console.log('hours:',this.hours)
-    console.log('events:',this.events())
+  getEventBoxHeight(eventStart:DateTime, eventEnd:DateTime){
+    const durationInMillis = Interval.fromDateTimes(eventStart,eventEnd).toDuration().milliseconds;
+    const durationInMinutes = durationInMillis / 60000;
+    const minuteRatio = `var(--kj-body-cell-height) / 60`;
+    return `calc(${minuteRatio} * ${durationInMinutes})`;
   }
+
 }

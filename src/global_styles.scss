@@ -125,13 +125,16 @@ kj-calendar {
 
     .container {
       display: flex;
-      flex-flow: column;
 
       position: relative;
 
-      .row {
+      .row,.column {
         display: flex;
         flex-wrap: nowrap;
+        &.column{
+          flex-direction: column;
+          flex-wrap: wrap;
+        }
 
         .cell {
           position: relative;
@@ -158,16 +161,17 @@ kj-calendar {
             border-top: 1px dashed var(--kj-border);
           }
 
-          &:first-child {
+          &.time-display{
             width: var(--kj-empty-cell-width);
             flex: unset;
           }
-        }
 
-        &:last-child {
-          .cell {
+          &:last-child {
             border-bottom: 1px solid var(--kj-border);
           }
+        }
+        &.day-column{
+          position: relative;
         }
       }
     }
@@ -211,12 +215,19 @@ kj-calendar {
     }
   }
   &-event-box {
+    display: block;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    cursor: pointer;
+    z-index: 2;
     .event-box{
+      padding: 4px;
       width: 100%;
       height: 100%;
       background-color: rgba(15, 108, 189, 0.9);
       border-radius: 4px;
-      cursor: pointer;
+
     }
   }
 }
