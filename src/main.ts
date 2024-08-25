@@ -34,6 +34,11 @@ export class App {
       id: 'test3',
       start: '2024-08-19T14:00:00',
       end: '2024-08-19T15:15:00'
+    },
+    {
+      id: 'test4',
+      start: '2024-08-19T06:00:00',
+      end: '2024-08-19T08:15:00'
     }
   ];
   testEvents:CalendarEvent[] = [];

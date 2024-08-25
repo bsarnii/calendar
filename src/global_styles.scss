@@ -122,6 +122,7 @@ kj-calendar {
   &-body {
     display: block;
     position: relative;
+    overflow: auto;
 
     .container {
       display: flex;
@@ -142,8 +143,8 @@ kj-calendar {
           display: flex;
           flex-flow: column;
 
-          width: var(--kj-cell-width);
           height: var(--kj-body-cell-height);
+          max-width: var(--kj-cell-width);
 
           border-top: 1px solid var(--kj-border);
           border-right: 1px solid var(--kj-border);
@@ -161,8 +162,8 @@ kj-calendar {
             border-top: 1px dashed var(--kj-border);
           }
 
-          &.time-display{
-            width: var(--kj-empty-cell-width);
+          &.cell-time-display{
+            max-width: var(--kj-empty-cell-width);
             flex: unset;
           }
 
@@ -172,6 +173,10 @@ kj-calendar {
         }
         &.day-column{
           position: relative;
+          width: var(--kj-cell-width);
+        }
+        &.column-time-display{
+          width: var(--kj-empty-cell-width)
         }
       }
     }

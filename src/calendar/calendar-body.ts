@@ -178,12 +178,12 @@ export class CalendarTodayBar {
   imports: [FormatHour, TodayBar, JsonPipe, CalendarEventBox],
   template: `
   <div class="container" todayBar [days]="days()">
-    <div class="column">
-      @for(hour of hours; track $index){
-        <div class="cell time-display">
-        <span class="mat-body-large hour">{{hour | formatHour}}</span>
-        </div>
-      }
+    <div class="column column-time-display">
+        @for(hour of hours; track $index){
+          <div class="cell cell-time-display">
+          <span class="mat-body-large hour">{{hour | formatHour}}</span>
+          </div>
+        }
     </div>
     @for(day of dayIntervals(); track $index){
       <div class="column day-column">
@@ -194,7 +194,7 @@ export class CalendarTodayBar {
               <p style='color: #fff'>End: {{event.end.toFormat('HH:mm')}}</p>
             </kj-calendar-event-box>
           }
-        }
+        } 
         @for(hour of hours; track $index){
             <div class="cell">
               <div class="half-hour"></div>
