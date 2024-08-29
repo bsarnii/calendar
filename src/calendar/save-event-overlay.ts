@@ -1,5 +1,5 @@
 import { OverlayRef } from '@angular/cdk/overlay';
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import {MatButtonModule} from '@angular/material/button';
 
 @Component({
@@ -11,20 +11,31 @@ import {MatButtonModule} from '@angular/material/button';
     <form>
         <div class="button-container">
             <button mat-flat-button>Save</button>
-            <button mat-flat-button>Discard</button>
+            <button mat-button>Discard</button>
         </div>
-        <input type="text" placeholder="Add a title">
-        <input type="time">
-        <input type=time>
+        <div class="input-wrapper">
+          <input type="text" placeholder="Add a title">
+          <input type="time" [value]="initialStartValue()">
+          <input type=time [value]="initialEndValue()">
+        </div>
     </form>
   `,
 })
 export class SaveEventOverlay {
-   /* overlayRef = inject(OverlayRef);
+  start = input(0);
 
-    close(){
-        this.overlayRef.detach();
-        this.overlayRef.dispose();
-    }*/
+  initialStartValue = computed(() => {
+    return `${this.start().toLocaleString('en-US', {
+      minimumIntegerDigits: 2,
+      useGrouping: false
+    })}:00` 
+  });
+
+  initialEndValue = computed(() => {
+    return `${this.start().toLocaleString('en-US', {
+      minimumIntegerDigits: 2,
+      useGrouping: false
+    })}:30` 
+  })
   
 }

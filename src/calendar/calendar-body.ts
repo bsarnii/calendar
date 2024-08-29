@@ -11,11 +11,11 @@ import {
   effect,
   computed,
 } from '@angular/core';
-import { JsonPipe } from '@angular/common';
+import { CommonModule, JsonPipe } from '@angular/common';
 import { DateTime, Interval } from 'luxon';
 import { CalendarEvent } from './models/CalendarEvent';
 import { CalendarEventBox } from './calendar-event-box';
-import {OverlayModule} from '@angular/cdk/overlay';
+import {Overlay, OverlayModule} from '@angular/cdk/overlay';
 import { SaveEventOverlay } from './save-event-overlay';
 import { generateRandomId } from '../common';
 
@@ -177,8 +177,53 @@ export class CalendarTodayBar {
 
 @Component({
   standalone: true,
+  selector: 'kj-calendar-clickable-cell',
+  imports: [SaveEventOverlay, OverlayModule, CommonModule],
+  template: `
+    <div [class.opened]="isOverlayOpen" cdkOverlayOrigin #trigger="cdkOverlayOrigin" (click)="isOverlayOpen = !isOverlayOpen" [style]="{height: '100%', width: '100%'}"></div>
+
+    <ng-template
+      cdkConnectedOverlay
+      [cdkConnectedOverlayOrigin]="trigger"
+      [cdkConnectedOverlayOpen]="isOverlayOpen"
+      (overlayOutsideClick)="isOverlayOpen = false"
+      [cdkConnectedOverlayPositions]="[
+        {
+            originX: 'end',
+            originY: 'center',
+            overlayX: 'start',
+            overlayY: 'center',
+            offsetX: 10
+        },
+        {
+            originX: 'start',
+            originY: 'center',
+            overlayX: 'end',
+            overlayY: 'center',
+            offsetX: -10
+        }
+      ]"
+      [cdkConnectedOverlayViewportMargin]="5"
+      [cdkConnectedOverlayScrollStrategy]="scrollStrategy"
+    >
+      <kj-save-event-overlay [start]="hour()"/>
+      </ng-template>
+
+  `,
+})
+export class ClickableCell {
+  hour = input(0);
+  overlay = inject(Overlay);
+
+  isOverlayOpen = false;
+  scrollStrategy = this.overlay.scrollStrategies.reposition();
+
+}
+
+@Component({
+  standalone: true,
   selector: 'kj-calendar-body',
-  imports: [FormatHour, TodayBar, JsonPipe, CalendarEventBox, OverlayModule, SaveEventOverlay],
+  imports: [FormatHour, TodayBar, JsonPipe, CalendarEventBox, OverlayModule, SaveEventOverlay, ClickableCell],
   template: `
   <div class="container" todayBar [days]="days()">
     <div class="column column-time-display">
@@ -199,34 +244,11 @@ export class CalendarTodayBar {
           }
         } 
         @for(hour of hours; track $index){
-            @let cellTopId = (dayIndex.toString() + hour.hour.toString());
-            @let cellBottomId = cellTopId + '-half';
             <div class="cell">
-              <div class="cell-top" style="height: 50%" (click)="onCellClick(cellTopId)" cdkOverlayOrigin #triggerTop="cdkOverlayOrigin"></div>
+              <kj-calendar-clickable-cell [hour]="hour.hour" class="cell-top" style="height: 50%"/>
               <div class="half-hour"></div>
-              <div class="cell-bottom" style="height: 50%" cdkOverlayOrigin (click)="onCellClick(cellBottomId)" #triggerBottom="cdkOverlayOrigin"></div>
+              <kj-calendar-clickable-cell [hour]="hour.hour" class="cell-bottom" style="height: 50%"/>
             </div>
-            <ng-template
-              cdkConnectedOverlay
-              [cdkConnectedOverlayOrigin]="triggerTop"
-              [cdkConnectedOverlayOpen]="openedOverlayId === cellTopId"
-              
-            >
-              <kj-save-event-overlay
-
-              />
-            </ng-template>
-
-            <ng-template
-              cdkConnectedOverlay
-              [cdkConnectedOverlayOrigin]="triggerBottom"
-              [cdkConnectedOverlayOpen]="openedOverlayId === cellBottomId"
-              (overlayOutsideClick)="onCellClick(null)"
-            >
-              <kj-save-event-overlay
-
-              />
-            </ng-template>
         }
       </div>
     }
