@@ -10,6 +10,7 @@ import {
   Input,
   effect,
   computed,
+  output,
 } from '@angular/core';
 import { CommonModule, JsonPipe } from '@angular/common';
 import { DateTime, Interval } from 'luxon';
@@ -17,7 +18,7 @@ import { CalendarEvent } from './models/CalendarEvent';
 import { CalendarEventBox } from './calendar-event-box';
 import {Overlay, OverlayModule} from '@angular/cdk/overlay';
 import { SaveEventOverlay } from './save-event-overlay';
-import { generateRandomId } from '../common';
+import { CalendarEventInputDTO } from './models/CalendarEventDTO';
 
 function createHours() {
   const workingHours: DateTime[] = [];
@@ -180,7 +181,13 @@ export class CalendarTodayBar {
   selector: 'kj-calendar-clickable-cell',
   imports: [SaveEventOverlay, OverlayModule, CommonModule],
   template: `
-    <div [class.opened]="isOverlayOpen" cdkOverlayOrigin #trigger="cdkOverlayOrigin" (click)="isOverlayOpen = !isOverlayOpen" [style]="{height: '100%', width: '100%'}"></div>
+    <div 
+      [class.opened]="isOverlayOpen"
+      cdkOverlayOrigin 
+      #trigger="cdkOverlayOrigin" 
+      (click)="isOverlayOpen = !isOverlayOpen" 
+      [style]="{height: '100%', width: '100%'}"
+    ></div>
 
     <ng-template
       cdkConnectedOverlay
@@ -205,25 +212,40 @@ export class CalendarTodayBar {
       ]"
       [cdkConnectedOverlayViewportMargin]="5"
       [cdkConnectedOverlayScrollStrategy]="scrollStrategy"
+      cdkConnectedOverlayPush="true"
     >
-      <kj-save-event-overlay [start]="hour()"/>
+      <kj-save-event-overlay (saveEvent)="saveEvent.emit($event)" (close)="isOverlayOpen = false" [setDate]="date"/>
       </ng-template>
 
   `,
 })
 export class ClickableCell {
-  hour = input(0);
+  
+  @Input({required:true}) date!: DateTime;
+  saveEvent = output<CalendarEventInputDTO>();
   overlay = inject(Overlay);
 
-  isOverlayOpen = false;
-  scrollStrategy = this.overlay.scrollStrategies.reposition();
 
+  isOverlayOpen = false;
+  scrollStrategy = this.overlay.scrollStrategies.close();
+
+}
+@Pipe({
+  standalone: true,
+  name: 'cellDateTime',
+})
+export class CellDateTimePipe implements PipeTransform {
+  transform(day: Interval, time:DateTime, minutesToAdd?:number): DateTime {
+    const timeWithMinutesAdded = time.plus({minutes: minutesToAdd ?? 0});
+    const {hour, minute} = timeWithMinutesAdded;
+    return day.start!.set({hour,minute});
+  }
 }
 
 @Component({
   standalone: true,
   selector: 'kj-calendar-body',
-  imports: [FormatHour, TodayBar, JsonPipe, CalendarEventBox, OverlayModule, SaveEventOverlay, ClickableCell],
+  imports: [FormatHour, TodayBar, JsonPipe, CalendarEventBox, OverlayModule, SaveEventOverlay, ClickableCell, CellDateTimePipe],
   template: `
   <div class="container" todayBar [days]="days()">
     <div class="column column-time-display">
@@ -239,15 +261,24 @@ export class ClickableCell {
           @if(event && day.contains(event.start)){
             <kj-calendar-event-box [style]="{height: getEventBoxHeight(event.start,event.end), top: getTop(event.start)}">
               <p style='color: #fff'>Start: {{event.start.toFormat('HH:mm')}}</p>
-              <p style='color: #fff'>End: {{event.end.toFormat('HH:mm')}}</p>
             </kj-calendar-event-box>
           }
         } 
         @for(hour of hours; track $index){
             <div class="cell">
-              <kj-calendar-clickable-cell [hour]="hour.hour" class="cell-top" style="height: 50%"/>
+              <kj-calendar-clickable-cell 
+                (saveEvent)="saveEvent.emit($event)"
+                [date]="day | cellDateTime:hour" 
+                class="cell-top" 
+                style="height: 50%"
+              />
               <div class="half-hour"></div>
-              <kj-calendar-clickable-cell [hour]="hour.hour" class="cell-bottom" style="height: 50%"/>
+              <kj-calendar-clickable-cell 
+                (saveEvent)="saveEvent.emit($event)"
+                [date]="day | cellDateTime:hour:30" 
+                class="cell-bottom" 
+                style="height: 50%"
+              />
             </div>
         }
       </div>
@@ -255,13 +286,15 @@ export class ClickableCell {
   </div>
   `,
 })
+
+
 export class CalendarBody{
   hours = createHours();
   events = input<CalendarEvent[]>([]);
   days = input<DateTime[]>([]);
+  saveEvent = output<CalendarEventInputDTO>();
 
-  isOpen = false;
-  openedOverlayId = '';
+  test = DateTime.fromISO('2016-05-25T09:08:34.123');
 
   dayIntervals = computed(() => {
     return this.days().map(day => {
@@ -288,11 +321,5 @@ export class CalendarBody{
     const minuteRatio = `var(--kj-body-cell-height) / 60`;
     return `calc(${minuteRatio} * ${durationInMinutes})`;
   }
-
-  onCellClick(id:string | null){
-    console.log(id)
-    id ? this.openedOverlayId = id : this.openedOverlayId = '';
-  }
-
-  generateRandomId = generateRandomId;
 }
+

@@ -1,1 +1,0 @@
-export {generateRandomId} from './util/generateRandomId.util';

@@ -13,45 +13,12 @@ import { CalendarEvent } from './calendar/models/CalendarEvent';
   selector: 'app-root',
   standalone: true,
   template: `
-  <kj-calendar [events]="testEvents"/>
+  <kj-calendar/>
   `,
   imports: [Calendar],
 })
 export class App {
   name = 'Angular';
-  testEventsDTO:CalendarEventOutputDTO[] = [
-    {
-    id: 'test',
-    start: '2024-08-26T08:00:00',
-    end: '2024-08-26T08:30:00'
-    },
-    {
-      id: 'test2',
-      start: '2024-08-27T10:30:00',
-      end: '2024-08-27T13:00:00'
-    },
-    {
-      id: 'test3',
-      start: '2024-08-28T14:00:00',
-      end: '2024-08-28T15:15:00'
-    },
-    {
-      id: 'test4',
-      start: '2024-08-29T06:00:00',
-      end: '2024-08-29T08:15:00'
-    }
-  ];
-  testEvents:CalendarEvent[] = [];
-
-  ngOnInit(){
-    this.testEvents = this.testEventsDTO.map(event => ({
-        ...event,
-        start: DateTime.fromISO(event.start),
-        end: DateTime.fromISO(event.end),
-        interval: Interval.fromDateTimes( DateTime.fromISO(event.start),  DateTime.fromISO(event.end))
-      
-    }))
-  }
 }
 
 bootstrapApplication(App, {

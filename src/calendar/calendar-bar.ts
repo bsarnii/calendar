@@ -6,7 +6,7 @@ import { Component } from '@angular/core';
   imports: [],
   template: `
   <div class='cell'></div>
-  @for (cell of cells; track cell) {
+  @for (cell of cells; track $index) {
     <div class='cell'></div>
   }
   `,

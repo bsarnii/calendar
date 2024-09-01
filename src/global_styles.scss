@@ -255,5 +255,15 @@ kj-save-event-overlay{
   }
   .input-wrapper{
     padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    .time-input-wrapper{
+      display: flex;
+      gap: 10px;
+      .mat-mdc-input-element::-webkit-calendar-picker-indicator {
+        display: block;
+      }
+    }
   }
 }

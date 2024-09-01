@@ -2,16 +2,14 @@ import {
   Component,
   signal,
   computed,
-  ChangeDetectorRef,
-  inject,
-  input,
+  inject
 } from '@angular/core';
 import { DateTime } from 'luxon';
 import { CalendarToolbar } from './calendar-toolbar';
 import { CalendarBody } from './calendar-body';
 import { CalendarHeader } from './calendar-header';
 import { CalendarBar } from './calendar-bar';
-import { CalendarEvent } from './models/CalendarEvent';
+import { CalendarFacade } from './data-access/calendar.facade';
 
 export type Range = { start: DateTime; end: DateTime };
 
@@ -23,13 +21,13 @@ export type Range = { start: DateTime; end: DateTime };
     <div class="body-wrapper">
       <kj-calendar-header [dates]="days()"/>
       <kj-calendar-bar />
-      <kj-calendar-body [events]="events()" [days]="days()"/>
+      <kj-calendar-body (saveEvent)="this.facade.saveCalendarEvent($event)" [events]="this.facade.calendarEvents()" [days]="days()"/>
     </div>
   `,
   imports: [CalendarToolbar, CalendarBody, CalendarHeader, CalendarBar],
 })
 export class Calendar {
-  cdRef = inject(ChangeDetectorRef);
+  facade = inject(CalendarFacade);
   currentRange = signal<Range>(null as any);
   days = computed(() => {
     const range = this.currentRange();
@@ -48,7 +46,10 @@ export class Calendar {
     }
     return dates;
   });
-  events = input<CalendarEvent[]>([]);
+
+  ngOnInit(){
+    this.facade.loadCalendarEvents();
+  }
 
   onRangeChanged(range: any) {
     if (range) this.currentRange.set(range);

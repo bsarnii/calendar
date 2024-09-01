@@ -1,12 +1,16 @@
 export interface CalendarEventInputDTO{
     start: string
     end: string
+    title?: string
+    description?: string
 }
 
 export interface CalendarEventOutputDTO{
     id: string
     start: string
     end: string
+    title?: string
+    description?: string 
 }
 
 
