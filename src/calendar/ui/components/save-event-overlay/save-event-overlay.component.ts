@@ -1,11 +1,10 @@
-import { OverlayRef } from '@angular/cdk/overlay';
-import { ChangeDetectorRef, Component, computed, effect, inject, Input, input, output } from '@angular/core';
+import { Component, inject, Input, output } from '@angular/core';
 import {MatButtonModule} from '@angular/material/button';
 import { DateTime } from 'luxon';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
-import { FormBuilder, NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { CalendarEventInputDTO } from './models/CalendarEventDTO';
+import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { CalendarEventInputDTO } from '../../../models/CalendarEventDTO';
 
 @Component({
   standalone: true,
@@ -41,7 +40,7 @@ import { CalendarEventInputDTO } from './models/CalendarEventDTO';
     </form>
   `,
 })
-export class SaveEventOverlay {
+export class SaveEventOverlayComponent {
   fb = inject(NonNullableFormBuilder);
 
   initialEventDate = DateTime.now();
@@ -50,7 +49,6 @@ export class SaveEventOverlay {
     this.form.controls.start.patchValue(value.toFormat('HH:mm'));
     this.form.controls.end.patchValue(value.plus({minutes: 30}).toFormat('HH:mm'))
     this.initialEventDate = value;
-    console.log(value)
   }
   close = output();
   saveEvent = output<CalendarEventInputDTO>();

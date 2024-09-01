@@ -6,7 +6,7 @@ import { DateTime } from "luxon";
   standalone: true,
   pure: true,
 })
-export class IsToday implements PipeTransform {
+export class IsTodayPipe implements PipeTransform {
   transform(date: DateTime) {
     return date.hasSame(DateTime.local(), 'day');
   }

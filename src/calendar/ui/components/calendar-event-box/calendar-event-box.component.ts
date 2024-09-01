@@ -10,6 +10,6 @@ import { Component } from '@angular/core';
     </div>
   `,
 })
-export class CalendarEventBox {
+export class CalendarEventBoxComponent {
 
 }

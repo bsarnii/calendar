@@ -5,10 +5,7 @@ import {
   inject
 } from '@angular/core';
 import { DateTime } from 'luxon';
-import { CalendarToolbar } from './calendar-toolbar';
-import { CalendarBody } from './calendar-body';
-import { CalendarHeader } from './calendar-header';
-import { CalendarBar } from './calendar-bar';
+import { CalendarToolbarComponent, CalendarBodyComponent, CalendarHeaderComponent, CalendarBarComponent  } from './ui';
 import { CalendarFacade } from './data-access/calendar.facade';
 
 export type Range = { start: DateTime; end: DateTime };
@@ -24,7 +21,7 @@ export type Range = { start: DateTime; end: DateTime };
       <kj-calendar-body (saveEvent)="this.facade.saveCalendarEvent($event)" [events]="this.facade.calendarEvents()" [days]="days()"/>
     </div>
   `,
-  imports: [CalendarToolbar, CalendarBody, CalendarHeader, CalendarBar],
+  imports: [CalendarToolbarComponent, CalendarBodyComponent, CalendarHeaderComponent, CalendarBarComponent],
 })
 export class Calendar {
   facade = inject(CalendarFacade);

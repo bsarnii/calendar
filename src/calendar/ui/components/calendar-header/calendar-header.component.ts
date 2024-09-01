@@ -1,12 +1,11 @@
 import { Component, input } from '@angular/core';
-import { IsToday } from './pipes/isToday';
-import { ToDay } from './pipes/toDay';
+import { IsTodayPipe, ToDayPipe } from '../../../util';
 import { DateTime } from 'luxon';
 
 @Component({
   standalone: true,
   selector: 'kj-calendar-header',
-  imports: [ToDay, IsToday],
+  imports: [ToDayPipe, IsTodayPipe],
   template: `
   <div class='cell'></div>
   @for (date of dates(); track date) {
@@ -23,6 +22,6 @@ import { DateTime } from 'luxon';
   }
   `,
 })
-export class CalendarHeader {
+export class CalendarHeaderComponent {
   dates = input<DateTime[]>();
 }

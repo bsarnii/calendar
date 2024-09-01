@@ -13,10 +13,10 @@ import {
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { Range } from './calendar';
+import { Range } from '../../../calendar';
 import { distinctUntilChanged } from 'rxjs/operators';
 import { DateTime } from 'luxon';
-import { WeekRangeSelectionStrategy } from '../custom-date-strategy';
+import { WeekRangeSelectionStrategyService } from '../../../util';
 
 @Component({
   standalone: true,
@@ -49,10 +49,10 @@ import { WeekRangeSelectionStrategy } from '../custom-date-strategy';
     </mat-form-field>
   `,
 })
-export class CalendarToolbar {
+export class CalendarToolbarComponent {
   dateStrategy = inject(
     MAT_DATE_RANGE_SELECTION_STRATEGY
-  ) as WeekRangeSelectionStrategy<DateTime>;
+  ) as WeekRangeSelectionStrategyService<DateTime>;
   rangeChanged = output<Range>();
   rangeFormGroup = new FormGroup({
     start: new FormControl<DateTime | null>(null),

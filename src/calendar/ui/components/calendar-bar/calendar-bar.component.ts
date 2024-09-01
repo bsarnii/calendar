@@ -11,6 +11,6 @@ import { Component } from '@angular/core';
   }
   `,
 })
-export class CalendarBar {
+export class CalendarBarComponent {
   cells = [0, 0, 0, 0, 0, 0, 0];
 }

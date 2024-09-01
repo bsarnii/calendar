@@ -6,7 +6,7 @@ import {
 } from '@angular/material/datepicker';
 
 @Injectable()
-export class WeekRangeSelectionStrategy<D>
+export class WeekRangeSelectionStrategyService<D>
   implements MatDateRangeSelectionStrategy<D>
 {
   constructor(private _dateAdapter: DateAdapter<D>) {}

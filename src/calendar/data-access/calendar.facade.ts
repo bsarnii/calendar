@@ -1,5 +1,4 @@
 import { computed, Injectable, signal } from "@angular/core";
-import { CalendarEvent } from "../models/CalendarEvent";
 import { CalendarEventInputDTO, CalendarEventOutputDTO } from "../models/CalendarEventDTO";
 import { DateTime } from "luxon";
 

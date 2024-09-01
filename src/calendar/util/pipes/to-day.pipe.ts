@@ -6,7 +6,7 @@ import { DateTime } from 'luxon';
   standalone: true,
   pure: true,
 })
-export class ToDay implements PipeTransform {
+export class ToDayPipe implements PipeTransform {
   transform(date: DateTime) {
     return date.toFormat('ccc');
   }
